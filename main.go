@@ -24,10 +24,14 @@ func main() {
     }
     defer db.Close()
 
-    err = db.Ping()
+    sqlStatement := `
+INSERT INTO users (age, email, first_name, last_name)
+VALUES ($1, $2, $3, $4)
+RETURNING id`
+    id := 0
+    err = db.QueryRow(sqlStatement, 30, "jon@calhoun.io", "Jonathan", "Calhoun").Scan(&id)
     if err != nil {
         panic(err)
     }
-
-    fmt.Println("Successfully Connected!")
+    fmt.Println("New record ID is:", id)
 }
